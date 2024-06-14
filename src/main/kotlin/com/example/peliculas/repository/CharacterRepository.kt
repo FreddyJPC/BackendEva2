@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository
 interface CharacterRepository : JpaRepository<Character, Long> {
 
     @Query("SELECT SUM(s.minutes) FROM Scene s WHERE s.film.id = :filmId")
-    fun sumMinutesByFilmId(@Param("filmId") filmId: Long): Int
+    fun sumMinutesByFilmId(@Param("filmId") filmId: Int): Int
 }

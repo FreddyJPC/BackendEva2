@@ -22,11 +22,11 @@ class SceneService {
 
     fun save(scene: Scene): Scene {
         // Obtener la película relacionada con la escena
-        val film = filmRepository.findById(scene.filmId!!)
+        val film = filmRepository.findById(scene.filmId!!.toLong())
             .orElseThrow { EntityNotFoundException("No se encontró la película con el ID: ${scene.filmId}") }
 
         // Calcular la suma de los minutos de todas las escenas existentes para esta película
-        val totalMinutes = sceneRepository.findAllByFilmId(scene.filmId!!).sumOf { it.minutes ?: 0 }
+        val totalMinutes = sceneRepository.findAllByFilmId(scene.filmId!!.toLong()).sumOf { it.minutes ?: 0 }
 
         // Verificar si la suma de los minutos con la nueva escena supera la duración de la película
         if (totalMinutes + (scene.minutes ?: 0) > film.duration!!) {
@@ -39,8 +39,8 @@ class SceneService {
     fun saveScenes(scenes: List<Scene>) {
         if (scenes.isEmpty()) return
 
-        val filmId = scenes.first().filmId!!
-        val film = filmRepository.findById(filmId)
+        val filmId = scenes.first().filmId!!.toLong()
+        val film = filmRepository.findById(filmId.toLong())
             .orElseThrow { EntityNotFoundException("No se encontró la película con el ID: $filmId") }
 
         val totalMinutes = scenes.sumOf { it.minutes ?: 0 }

@@ -67,7 +67,7 @@ class CharacterService {
         val film = filmRepository.findById(filmId)
             .orElseThrow { EntityNotFoundException("No se encontró la película con el ID: $filmId") }
 
-        val totalMinutes = characterRepository.sumMinutesByFilmId(filmId)
+        val totalMinutes = characterRepository.sumMinutesByFilmId(filmId.toInt())
 
         return totalMinutes <= film.duration!!
     }

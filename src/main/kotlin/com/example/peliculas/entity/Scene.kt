@@ -19,11 +19,9 @@ class Scene {
     @Column(name = "film_id", nullable = false)
     var filmId: Long? = null
 
-    @JsonIgnore
+
     @ManyToOne
     @JoinColumn(name = "film_id", insertable = false, updatable = false)
     var film: Film? = null
 
-    @OneToMany(mappedBy = "scene", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var characters: MutableList<Character> = mutableListOf()
 }

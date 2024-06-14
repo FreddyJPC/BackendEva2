@@ -15,6 +15,5 @@ class Film {
     var director: String? = null
     var duration: Int? = null
 
-    @OneToMany(mappedBy = "film", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var scenes: MutableList<Scene> = mutableListOf()
+
 }
