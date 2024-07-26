@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface CharacterRepository : JpaRepository<Character, Long> {
-
-    @Query("SELECT SUM(s.minutes) FROM Scene s WHERE s.film.id = :filmId")
-    fun sumMinutesByFilmId(@Param("filmId") filmId: Int): Int
+    fun existsBySceneId(sceneId: Long): Boolean
+    fun deleteBySceneId(sceneId: Long)
 }
+

@@ -4,9 +4,8 @@ import com.example.peliculas.entity.Film
 import com.example.peliculas.service.FilmService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
-
 @RestController
-@RequestMapping("/films")
+@RequestMapping("/film")
 @CrossOrigin(methods = [RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH, RequestMethod.PUT, RequestMethod.DELETE])
 class FilmController {
 

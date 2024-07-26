@@ -17,11 +17,5 @@ class Scene {
     var minutes: Int? = null
 
     @Column(name = "film_id", nullable = false)
-    var filmId: Long? = null
-
-
-    @ManyToOne
-    @JoinColumn(name = "film_id", insertable = false, updatable = false)
-    var film: Film? = null
-
+    var filmId: Long? = null  // Este campo es obligatorio y no puede ser nulo.
 }

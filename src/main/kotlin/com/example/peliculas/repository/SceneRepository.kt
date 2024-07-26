@@ -6,5 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface SceneRepository : JpaRepository<Scene, Long> {
-    fun findAllByFilmId(filmId: Long): List<Scene>
+    fun existsByFilmId(filmId: Long): Boolean
+    fun deleteByFilmId(filmId: Long)
 }
+

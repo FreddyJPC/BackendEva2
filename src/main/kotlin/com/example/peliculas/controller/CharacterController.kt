@@ -1,6 +1,7 @@
 package com.example.peliculas.controller
 
 import com.example.peliculas.entity.Character
+import com.example.peliculas.entity.CharacterDto
 import com.example.peliculas.service.CharacterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -19,13 +20,13 @@ class CharacterController {
     }
 
     @PostMapping
-    fun save(@RequestBody character: Character): Character {
-        return characterService.save(character)
+    fun save(@RequestBody characterDto: CharacterDto): Character {
+        return characterService.save(characterDto)
     }
 
     @PutMapping("/{id}")
-    fun update(@PathVariable id: Long, @RequestBody character: Character): Character {
-        return characterService.update(id, character)
+    fun update(@PathVariable id: Long, @RequestBody characterDto: CharacterDto): Character {
+        return characterService.update(id, characterDto)
     }
 
     @DeleteMapping("/{id}")

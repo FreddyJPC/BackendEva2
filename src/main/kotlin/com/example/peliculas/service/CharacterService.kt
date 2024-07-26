@@ -1,9 +1,9 @@
 package com.example.peliculas.service
 
 import com.example.peliculas.entity.Character
+import com.example.peliculas.entity.CharacterDto
 import com.example.peliculas.repository.CharacterRepository
-import com.example.peliculas.repository.FilmRepository
-import jakarta.persistence.EntityNotFoundException
+import com.example.peliculas.repository.SceneRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -14,61 +14,65 @@ class CharacterService {
     lateinit var characterRepository: CharacterRepository
 
     @Autowired
-    lateinit var filmRepository: FilmRepository
+    lateinit var sceneRepository: SceneRepository
 
     fun list(): List<Character> {
         return characterRepository.findAll()
     }
 
-    fun save(character: Character): Character {
+    fun save(characterDto: CharacterDto): Character {
+        val scene = sceneRepository.findById(characterDto.scene_id)
+            .orElseThrow { RuntimeException("Scene not found") }
+
+        val character = Character().apply {
+            description = characterDto.description
+            cost = characterDto.cost
+            stock = characterDto.stock
+            this.scene = scene
+        }
+
         return characterRepository.save(character)
     }
 
-    fun update(id: Long, character: Character): Character {
-        val existingCharacter = characterRepository.findById(id)
-            .orElseThrow { EntityNotFoundException("No se encontró el personaje con el ID: $id") }
+    fun update(id: Long, characterDto: CharacterDto): Character {
+        val existingCharacter = characterRepository.findById(id).orElseThrow { RuntimeException("Character not found") }
+        val scene = sceneRepository.findById(characterDto.scene_id)
+            .orElseThrow { RuntimeException("Scene not found") }
 
-        existingCharacter.description = character.description
-        existingCharacter.cost = character.cost
-        existingCharacter.stock = character.stock
-
-        return characterRepository.save(existingCharacter)
-    }
-
-    fun delete(id: Long) {
-        val existingCharacter = characterRepository.findById(id)
-            .orElseThrow { EntityNotFoundException("No se encontró el personaje con el ID: $id") }
-
-        characterRepository.delete(existingCharacter)
-    }
-
-    fun getById(id: Long): Character {
-        return characterRepository.findById(id)
-            .orElseThrow { EntityNotFoundException("No se encontró el personaje con el ID: $id") }
-    }
-
-    fun partialUpdate(id: Long, partialCharacter: Map<String, Any>): Character {
-        val existingCharacter = characterRepository.findById(id)
-            .orElseThrow { EntityNotFoundException("No se encontró el personaje con el ID: $id") }
-
-        partialCharacter.forEach { (key, value) ->
-            when (key) {
-                "description" -> existingCharacter.description = value as String
-                "cost" -> existingCharacter.cost = value as Double?
-                "stock" -> existingCharacter.stock = value as Int
-                else -> throw IllegalArgumentException("Campo no válido para actualización parcial: $key")
-            }
+        existingCharacter.apply {
+            description = characterDto.description
+            cost = characterDto.cost
+            stock = characterDto.stock
+            this.scene = scene
         }
 
         return characterRepository.save(existingCharacter)
     }
 
-    fun checkFilmDurationAgainstTotalSceneMinutes(filmId: Long): Boolean {
-        val film = filmRepository.findById(filmId)
-            .orElseThrow { EntityNotFoundException("No se encontró la película con el ID: $filmId") }
+    fun delete(id: Long) {
+        characterRepository.deleteById(id)
+    }
 
-        val totalMinutes = characterRepository.sumMinutesByFilmId(filmId.toInt())
+    fun getById(id: Long): Character {
+        return characterRepository.findById(id).orElseThrow { RuntimeException("Character not found") }
+    }
 
-        return totalMinutes <= film.duration!!
+    fun partialUpdate(id: Long, partialCharacter: Map<String, Any>): Character {
+        val character = characterRepository.findById(id).orElseThrow { RuntimeException("Character not found") }
+        partialCharacter.forEach { (key, value) ->
+            when (key) {
+                "description" -> character.description = value as String
+                "cost" -> character.cost = value as Double
+                "stock" -> character.stock = value as Int
+                // Manejo del campo 'scene_id' solo si está presente en la actualización parcial
+                "scene_id" -> {
+                    val sceneId = value as Long
+                    val scene = sceneRepository.findById(sceneId)
+                        .orElseThrow { RuntimeException("Scene not found") }
+                    character.scene = scene
+                }
+            }
+        }
+        return characterRepository.save(character)
     }
 }
